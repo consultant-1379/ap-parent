@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ericsson.nms</groupId>
+        <artifactId>integration</artifactId>
+        <version>15.2.0.40</version>
+    </parent>
+
+    <groupId>com.ericsson.oss.autoprovisioning.ap-parent</groupId>
+    <artifactId>ap-parent</artifactId>
+    <version>1.13.1308-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>[${project.artifactId}] POM</name>
+
+    <prerequisites>
+        <maven>3.0.5</maven>
+    </prerequisites>
+
+    <scm>
+        <tag>ap-parent-1.13.1301</tag>
+    </scm>
+
+    <issueManagement>
+        <url>http://jira-oss.lmera.ericsson.se/browse/TORF/</url>
+        <system>Jira</system>
+    </issueManagement>
+
+    <ciManagement>
+        <url>http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/</url>
+        <system>Jenkins</system>
+    </ciManagement>
+
+    <properties>
+        <!-- =============================================================================== -->
+        <!-- ======= START PROPERTIES TO BE CHECKED AND UPDATED FOR BASELINE CHANGES ======= -->
+        <!-- =============================================================================== -->
+
+        <!-- ENM DPS-related properties -->
+        <version.dps>2.109.6</version.dps>
+        <version.dps.api>1.104.2</version.dps.api>
+        <version.dps.neo4j.api>2.136.3</version.dps.neo4j.api>
+
+        <!-- ENM Modelling-related properties -->
+        <version.modelling.bom>22.5.12</version.modelling.bom>
+        <version.network-element-definition-model-jar>3.57.1</version.network-element-definition-model-jar>
+        <!-- Start taken from Modelling BOM -->
+        <version.modeling.schemata>12.5.1</version.modeling.schemata>   <!-- is this used ??-->
+        <version.annotation-processor>4.5.3</version.annotation-processor>
+        <version.model-processing>2.5.3</version.model-processing>
+        <version.model-service>13.27.4</version.model-service>
+        <version.model-service-api>12.17.3</version.model-service-api>
+        <!-- End taken from Modelling BOM -->
+
+        <!-- AIWS model-related properties-->
+        <version.ai-core-webmodel>1.7.4</version.ai-core-webmodel>
+
+        <!-- ENM SFWK-related properties -->
+        <version.service.framework>4.6.4</version.service.framework>
+        <version.service.framework-api>4.0.17</version.service.framework-api>
+
+
+        <!-- ENM PIB-related properties -->
+        <version.pib>3.24.4</version.pib>
+
+        <!-- ENM CM-related properties -->
+        <version.cm-reader>1.169.1</version.cm-reader>
+        <version.cm-writer>1.147.1</version.cm-writer>
+        <version.cm-editor>1.113.1</version.cm-editor>
+        <version.cm-import-service-api>1.11.1</version.cm-import-service-api>
+
+        <!-- ENM Mediation-related properties -->
+        <version.mediation.engine.api>2.8.2</version.mediation.engine.api>  <!-- Code also used -->
+
+        <!-- ENM SHM-related properties -->
+        <version.shm-cppinventorysynchservice-service>1.216.1</version.shm-cppinventorysynchservice-service> <!-- Code also used -->
+        <version.shm-models-jar>1.138.1</version.shm-models-jar>
+        <version.shm-softwarepackage-mgmt-api>1.13.1</version.shm-softwarepackage-mgmt-api>                 <!-- Code also used -->
+        <version.shm-softwarepackage-mgmt-ear>1.154.1</version.shm-softwarepackage-mgmt-ear>
+        <version.shm-license-mgmt-api>1.14.1</version.shm-license-mgmt-api>                                 <!-- Code also used -->
+        <version.shm-license-mgmt-ear>1.124.1</version.shm-license-mgmt-ear>
+        <version.shm-cli>1.83.1</version.shm-cli>
+        <version.shm-inventory-remote-api>1.165.1</version.shm-inventory-remote-api>
+        <version.shm-softwarepackagemanagement-swp-query-api>1.68.1</version.shm-softwarepackagemanagement-swp-query-api>
+
+
+        <!-- ENM ScriptEngine-related properties -->
+        <!-- NOTE: commons-lang3 is used from script-engine-editor-spi 1.34.35 to replace commons-lang -->
+        <version.script-engine-editor-spi>1.35.1</version.script-engine-editor-spi>         <!-- Note: It's the version in script-engine-ear -->
+        <version.script-engine-ear>1.138.5</version.script-engine-ear>                       <!-- ERICscripteng_CXP9030314 -->
+
+        <!-- ENM WFS-related properties -->
+        <version.wfs>3.12.1</version.wfs>                                                  <!-- Code also used -->
+
+        <!-- ENM SMRS-related properties -->
+        <version.smrs-service>1.132.2</version.smrs-service>                                 <!-- Code also used -->
+
+        <!-- ENM FM-related properties -->
+        <version.fm.mediationeventmodel>1.53.1</version.fm.mediationeventmodel>
+
+        <!-- ENM Security-related properties -->
+        <version.generic-identity-mgmt-service-api>1.109.2</version.generic-identity-mgmt-service-api>
+        <version.identity-mgt-service>1.64.1</version.identity-mgt-service>                 <!-- Code also used -->
+        <version.node.security>1.172.2</version.node.security>                               <!-- Code also used -->
+        <version.cryptography.service>1.16.1</version.cryptography.service>
+        <version.cryptography.service.api>1.6.2</version.cryptography.service.api>
+        <version.pki.common.model>2.1.1</version.pki.common.model>
+
+        <!-- ENM NodeDiscovery properties -->
+        <version.nd-flow-model>1.26.1</version.nd-flow-model>
+
+        <!-- Hardware Replace properties-->
+        <version.hw-replace-msrbsv1-ext-api>1.10.11</version.hw-replace-msrbsv1-ext-api> <!-- EAP7 version -->
+
+        <!-- ENM system wide IP uniqueness check dependency -->
+        <version.nedo.topology>1.0.6</version.nedo.topology>
+
+        <!-- ENM CLI EBNF properties -->
+        <version.ebnf-to-json-grammar-translator>1.0.29</version.ebnf-to-json-grammar-translator>
+
+        <!-- Local version only -->
+        <version.camunda>7.11.1-ee</version.camunda>
+
+        <!-- JEE-related properties -->
+        <version.ejb>3.1</version.ejb>
+        <version.jee>8</version.jee>
+        <version.javax.javaee>8.0</version.javax.javaee>
+
+        <!-- JBOSS-related properties -->
+        <jboss.ip>localhost</jboss.ip>
+        <jboss.mgmt.port>9990</jboss.mgmt.port>
+        <version.jboss.as.dist>7.2.1.1</version.jboss.as.dist>
+        <version.jboss.javaee>1.0.4.Final-redhat-00001</version.jboss.javaee>
+        <version.jboss-as-maven-plugin>7.4.Final</version.jboss-as-maven-plugin>
+        <version.jboss-ejb3-ext-api>2.2.0.Final</version.jboss-ejb3-ext-api>
+        <version.jboss.eap.javaee8.with.tools>7.2.6.GA</version.jboss.eap.javaee8.with.tools>
+        <!-- The following properties are used to set up a JBoss location. The JBoss distribution zip file unzips to a directory name that does not match the name of the archive so the jboss.base.name
+            property is used to handle this mismatch. In general it is handiest to just override jboss.home only. -->
+        <jboss.root.dir>${project.build.directory}</jboss.root.dir>
+        <jboss.base.name>jboss-eap-${version.jboss.as.dist}</jboss.base.name>
+        <jboss.home>${jboss.root.dir}/${jboss.base.name}</jboss.home>
+
+        <!-- Maven-related properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <showDeprecation>false</showDeprecation>
+
+        <!-- Testing-related properties -->
+        <docker.hub>armdocker.rnd.ericsson.se/proj_oss/autoprovisioning</docker.hub>
+
+        <allure.version>1.4.4</allure.version>
+        <aspectj.version>1.8.8</aspectj.version>
+        <version.allure.maven>1.4.0</version.allure.maven>
+        <version.apache.httpclient>4.5.13</version.apache.httpclient>
+        <version.apache.httpcore>4.4.1</version.apache.httpcore>
+        <version.arquillian.jacoco>1.0.0.Alpha8</version.arquillian.jacoco>
+        <version.arquillian.suite>1.2.0</version.arquillian.suite>
+        <version.assertj>2.5.0</version.assertj>
+        <version.camunda.bpm.assert>3.0.0</version.camunda.bpm.assert>
+        <version.catch.exception>1.4.4</version.catch.exception>
+        <version.commons.exec>1.3</version.commons.exec>
+        <version.h2>1.4.197</version.h2>
+        <version.hamcrest>1.3</version.hamcrest>
+        <version.jacoco>0.8.5</version.jacoco>
+        <version.jboss.jee>3.0.3.Final</version.jboss.jee>
+        <version.jersey>2.19</version.jersey>
+        <version.jmockit>1.25</version.jmockit>
+        <version.junit>4.11</version.junit>
+        <version.mockito>1.10.19</version.mockito>
+        <version.owasp.dependency.check>6.1.4</version.owasp.dependency.check>
+        <version.testng>6.14.3</version.testng>
+        <version.uuid.generator>3.1.3</version.uuid.generator>
+        <version.spock>1.1-groovy-2.4-rc-3</version.spock>
+        <version.groovy>2.4.0</version.groovy>
+        <version.gmavenplus>1.5</version.gmavenplus>
+        <version.ericsson.cdi>1.1.80</version.ericsson.cdi>
+
+        <!-- 3PP-related properties -->
+        <version.commons.lang>2.6-redhat-2</version.commons.lang>
+        <version.commons.beanutils>1.9.4</version.commons.beanutils>
+        <version.commons.logging>1.2</version.commons.logging>  <!-- Note: Version 1.2 is required for common-beanutils 1.9.4 -->
+        <version.commons.cli>1.4</version.commons.cli>
+        <version.commons.collections>3.2.2</version.commons.collections>
+        <version.commons.compress>1.21</version.commons.compress>
+        <version.commons.csv>1.1</version.commons.csv>
+        <version.commons.io>2.4</version.commons.io>
+        <version.gson>2.3.1</version.gson>
+        <version.guava>25.0.0.redhat-1</version.guava>
+        <version.resteasy>3.6.1.Final</version.resteasy>
+        <version.slf4j>1.7.21</version.slf4j>
+        <version.jackson.core>2.15.2</version.jackson.core>
+        <version.jackson.databind>2.15.2</version.jackson.databind>
+
+        <!-- Build-related properties -->
+        <project.ear.defaultLibBundleDir>lib</project.ear.defaultLibBundleDir>
+        <project.ear.Dependencies>org.slf4j</project.ear.Dependencies>
+
+        <!-- RPM build-related properties -->
+        <com.ericsson.oss.rpm.architecture>noarch</com.ericsson.oss.rpm.architecture>
+        <rpm-root>opt</rpm-root>
+        <comp-name>ericsson</comp-name>
+        <rpm.copyright>2014 Ericsson AB All rights reserved</rpm.copyright>
+
+        <!-- Site build-related properties -->
+        <jira.url>http://jira-oss.lmera.ericsson.se/browse/TORF/</jira.url>
+        <nexusUrl>https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/</nexusUrl>
+        <gerritUrl>https://gerrit.ericsson.se</gerritUrl>
+        <jenkinsUrl>http://eselivm2v553l.lmera.ericsson.se:8080/jenkins</jenkinsUrl>
+
+        <!-- Sonarqube Configuration properties  -->
+        <sonar.sources>pom.xml,src</sonar.sources>
+        <sonar.tests />
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOMs -->
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>ServiceFrameworkJBossBOM</artifactId>
+                <version>${version.service.framework}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+                <artifactId>data-persistence-service-bom</artifactId>
+                <version>${version.dps}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                <artifactId>Modeling-BOM</artifactId>
+                <version>${version.modelling.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-eap-javaee8-with-tools</artifactId>
+                <version>${version.jboss.eap.javaee8.with.tools}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <scope>provided</scope>
+                <version>8.0</version>
+            </dependency>
+
+            <!-- Override Integration pom, to be removed later -->
+			
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>2.0.SP1</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Test Dependencies -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.assertj}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.codearte.catch-exception</groupId>
+                <artifactId>catch-exception</artifactId>
+                <version>${version.catch.exception}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${version.hamcrest}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${version.mockito}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${version.slf4j}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.spockframework</groupId>
+                <artifactId>spock-core</artifactId>
+                <version>${version.spock}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.cds</groupId>
+                <artifactId>cdi-test-support</artifactId>
+                <version>${version.ericsson.cdi}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm.assert</groupId>
+                <artifactId>camunda-bpm-assert</artifactId>
+                <version>${version.camunda.bpm.assert}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${version.h2}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${version.uuid.generator}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jmockit</groupId>
+                <artifactId>jmockit</artifactId>
+                <version>${version.jmockit}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${version.commons.logging}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- 3PP Dependencies -->
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jaxrs</artifactId>
+                <version>${version.resteasy}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-client</artifactId>
+                <version>${version.resteasy}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-engine</artifactId>
+                <version>${version.camunda}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${version.commons.beanutils}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>${version.commons.cli}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${version.commons.csv}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${version.commons.compress}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${version.commons.io}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${version.commons.lang}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${version.commons.collections}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${version.gson}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4j}</version>
+                <scope>provided</scope>
+            </dependency>
+
+             <!-- Service Framework API Dependencies -->
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-cluster-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-context-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-core-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-eventbus-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-licensing-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-modeled-eventbus-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-recording-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-resources-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-security-accesscontrol-api</artifactId>
+                <version>${version.service.framework-api}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Service Framework Dependencies -->
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-cluster-core</artifactId>
+                <version>${version.service.framework}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-context-core</artifactId>
+                <version>${version.service.framework}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-context-core-non-cdi</artifactId>
+                <version>${version.service.framework}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-recording-non-cdi</artifactId>
+                <version>${version.service.framework}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-resources-non-cdi</artifactId>
+                <version>${version.service.framework}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency> <!-- Needed for ap-service-core acceptance tests -->
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>service-framework-dist</artifactId>
+                <version>${version.service.framework}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>sdk-services-core</artifactId>
+                <version>4.9.2</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Workflow Service Dependencies -->
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-api</artifactId>
+                <version>${version.wfs}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-jee-int</artifactId>
+                <version>${version.wfs}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-jee-local-api</artifactId>
+                <version>${version.wfs}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-jee-wfapp</artifactId>
+                <version>${version.wfs}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-jse</artifactId>
+                <version>${version.wfs}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.wfs</groupId>
+                <artifactId>wfs-task-api</artifactId>
+                <version>${version.wfs}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- ENM Dependencies -->
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+                <artifactId>dps-api</artifactId>
+                <version>${version.dps.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+                <artifactId>dps-core-spi</artifactId>
+                <version>${version.dps}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.datalayer.dps.3pp</groupId>
+                <artifactId>neo4j-java-driver-client-api</artifactId>
+                <version>${version.dps.neo4j.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.cm</groupId>
+                <artifactId>script-engine-editor-spi</artifactId>
+                <version>${version.script-engine-editor-spi}</version>
+                <exclusions> <!-- Removing unnecessary transitive dependencies -->
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.nms.mediation</groupId>
+                <artifactId>core-mediation-api</artifactId>
+                <version>${version.mediation.engine.api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.cm.import</groupId>
+                <artifactId>import-service-api-jar</artifactId>
+                <version>${version.cm-import-service-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.cm.import</groupId>
+                <artifactId>async-import-service-api-jar</artifactId>
+                <version>${version.cm-import-service-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.mediation.nodediscovery</groupId>
+                <artifactId>node-discovery-flow-model-jar</artifactId>
+                <version>${version.nd-flow-model}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                <artifactId>model-service-api-jar</artifactId>
+                <version>${version.model-service-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.fm.models</groupId>
+                <artifactId>fmmediationeventmodel-jar</artifactId>
+                <version>${version.fm.mediationeventmodel}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.nms.security</groupId>
+                <artifactId>smrs-service-api</artifactId>
+                <version>${version.smrs-service}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.nms.security</groupId>
+                <artifactId>identitymgmtservices-api</artifactId>
+                <version>${version.identity-mgt-service}</version>
+                <exclusions> <!-- Removing unnecessary transitive dependencies -->
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm</groupId>
+                <artifactId>shm-softwarepackage-mgmt-api-jar</artifactId>
+                <version>${version.shm-softwarepackage-mgmt-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm</groupId>
+                <artifactId>shm-license-mgmt-api-jar</artifactId>
+                <version>${version.shm-license-mgmt-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm</groupId>
+                <artifactId>shm-inventory-remote-api</artifactId>
+                <version>${version.shm-inventory-remote-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm</groupId>
+                <artifactId>backupservice-remote-api</artifactId>
+                <version>${version.shm-cppinventorysynchservice-service}</version>
+                <exclusions> <!-- Removing unnecessary transitive dependencies -->
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm.models</groupId>
+                <artifactId>shm-models-jar</artifactId>
+                <version>${version.shm-models-jar}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.shm</groupId>
+                <artifactId>shm-softwarepackagemanagement-swp-query-api</artifactId>
+                <version>${version.shm-softwarepackagemanagement-swp-query-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.nms.security.nscs</groupId>
+                <artifactId>node-security-api</artifactId>
+                <version>${version.node.security}</version>
+                <exclusions> <!-- Removing unnecessary transitive dependencies -->
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.security.cryptography</groupId>
+                <artifactId>cryptography-service-api-jar</artifactId>
+                <version>${version.cryptography.service.api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.security</groupId>
+                <artifactId>pki-common-model-jar</artifactId>
+                <version>${version.pki.common.model}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.services.security.identitymgmt</groupId>
+                <artifactId>generic-identity-mgmt-service-api</artifactId>
+                <version>${version.generic-identity-mgmt-service-api}</version>
+            </dependency>
+
+            <!-- Hardware Replace Dependencies-->
+            <dependency>
+                <groupId>com.ericsson.oss.services.hardwarereplace</groupId>
+                <artifactId>hw-replace-msrbsv1-ext-jar</artifactId>
+                <version>${version.hw-replace-msrbsv1-ext-api}</version>
+            </dependency>
+
+            <!-- TW Model -->
+            <dependency>
+                <groupId>com.ericsson.oss.services.cm</groupId>
+                <artifactId>cm-parameters-model</artifactId>
+                <version>${version.cm.parameters.model}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>2.3</version>
+                    <configuration>
+                        <ejbVersion>${version.ejb}</ejbVersion>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>analyze-dep-mgt</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-ear-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>generate-application-xml</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>build-helper-maven-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>regex-property</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.maven.plugins</groupId>
+                                        <artifactId>rstate-maven-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>rstate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution> <!-- Ignore maven-enforcer-plugin in eclipse -->
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.oss.itpf.datalayer.modeling.tools</groupId>
+                                        <artifactId>model-processing-jar</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>modelproc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.oss.itpf.datalayer.modeling.tools</groupId>
+                                        <artifactId>annotation-processor-jar</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>annoproc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>unpack</goal>
+                                            <goal>copy</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                                        <artifactId>model-deployment-jar</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>model-deploy</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.oss.services.autoprovisioning</groupId>
+                                        <artifactId>ap-testware-integration-maven</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>replaceStubs</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+                                        <artifactId>dps-maven-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>build-dps</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-plugin-plugin</artifactId>
+                                        <versionRange>[0,)</versionRange>
+                                        <goals>
+                                            <goal>descriptor</goal>
+                                            <goal>helpmojo</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <excludes>
+                        <exclude>**/generated/*.java</exclude>
+                        <exclude>**/maven/*.java</exclude>
+                    </excludes>
+                    <includeTests>true</includeTests>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+            </plugin>
+
+            <!-- Spock and Groovy configuration plugins -->
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${version.gmavenplus}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${version.groovy}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Spec.*</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <showDeprecation>${showDeprecation}</showDeprecation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- This profile is used to process all AP modules as part of the build. -->
+        <profile>
+            <id>all-modules</id>
+            <activation>
+                <property>
+                    <name>modules</name>
+                </property>
+            </activation>
+            <modules>
+                <module>../ap-data-model-core</module>
+                <module>../ap-data-model-macro</module>
+                <module>../ap-model-ecim</module>
+                <module>../ap-service-core</module>
+                <module>../ap-workflow-macro</module>
+                <module>../ap-workflow-ecim</module>
+                <module>../aiws</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

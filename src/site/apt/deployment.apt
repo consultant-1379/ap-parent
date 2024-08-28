@@ -1,0 +1,87 @@
+Deployment
+
+    As the AP parent pom knows about most, if not all, of the external dependencies and their versions as well
+    as the internal AP version it is possible to provision a local development environment with the
+    required components already installed.
+
+    This document outlines the usage as well as indicating what steps that still require manual intervention.  In
+    addition it is important to note that this currently only sets up a local development environment.  Future
+    capabilities may allow for upgrading a test server.
+
+    Most of this process is automated through the use of maven and the <<<deployment/pom.xml>>>.  There are a number
+    of deployable components and by default all components are deployed.  Properties may be set to disable the deployment
+    of component groups and these are described in the following sections.
+
+    Use the following command to invoke the default local deployment.
+
+---
+    mvn [clean] install -Ddev.local
+---
+
+* Manual Dependencies
+
+    Currently this pom only handles deployment of artefacts into a JBoss instance.  Other external applications
+    must be manually installed prior to running the JBoss instance.
+
+** Versant
+
+    Download and install Versant locally
+    {{https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/content/sites/tor/data-persistence-service-api/getting_started/install_versant.html}}.
+
+    Execute the following commands (with admin privileges) to create the database instance.
+
+---
+makedb dps_integration
+createdb dps_integration
+dbuser -add -n versant -passwd shversant dps_integration
+startdb dps_integration
+---
+
+    Use the following commands to remove a database instance.
+
+---
+stopdb -f dps_integration
+removedb -rmdir dps_integration
+---
+
+    It is recommended to use dps_integration as the database name as this is also the name used in deployment.
+
+** Postgresql
+
+    This database server can be used by the Workflow Service (WFS) if persistence is required.  By default WFS will run with an in-memory
+    database.  Refer tp {{https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/content/sites/tor/WorkflowService/installing-jee.html}}
+    to install postgres and configure JBoss to use postgres.
+
+* Properties
+
+    The deployment process can be customised through the use of various properties.
+
+    [jboss.root.dir] the directory into which the jboss distribution will be unpacked
+
+    [jboss.base.name] The JBoss distribution zip file unzips
+    to a directory name that does not match the name of the archive so the jboss.base.name property is used to handle this mismatch.
+    In general it is handiest to just override jboss.home only; however, for the initial deploy of JBoss <<<jboss.root.dir>>> is the only
+    property that is relevant.
+
+    [jboss.home]  defaults to \$\{jboss.root.dir\}/\$\{jboss.base.name\}
+
+* Profiles
+
+** dev-local
+
+    Activate this profile to enable deployment of a JBoss container.
+
+    The deployment can be enable by specifying <<<-Ddev.local>>>.
+
+* Deployment examples
+
+---
+    mvn clean install -Ddev.local
+---
+
+* Removing the JBoss instance
+
+    No profiles are defined to selectively remove components from a JBoss instance.  Instead, an instance can be
+    removed and redeployed from scratch.
+
+    Removal of a JBoss instance is performed using <<<mvn clean>>>.  It will remove the directory denoted by the property <<<jboss.home>>>.

@@ -1,0 +1,209 @@
+    -----
+    ap-parent Overview
+    -----
+
+Purpose
+
+    The auto-provisioning (AP) feature is split across multiple repositories and managing the dependencies across all of the necessary
+    pom files can be difficult.
+
+    This parent pom is used to centralise the common dependencies and build handling
+    across the repositories so that versions, for example, can be defined on one place
+    and applied to every repository.
+
+Not a magic bullet
+
+    While this parent pom helps centralize the location for version information it still requires some discipline to make it
+    work successfully.
+
+    For example, if a version of a dependency is updated in the parent pom then a new version
+    of the parent pom must be delivered and all poms referencing the parent pom must be updated to use the new parent pom.
+
+    Maven provides some support to assist with this but ultimately it will be through following a defined {{{WayofWorking}way of working}}
+    that the greatest benefit will come from using this parent pom.
+
+Release vs Snapshot
+
+    In order for a release build to be performed there may not be any <<<SNAPSHOT>>> dependencies declared in the pom.  Therefore,
+    the default versions defined for in the parent pom are the released versions so that the release build will work without having
+    to enable any special profiles or define any special properties.
+
+    When developing new functionality it may be necessary to have a dependency on <<<SNAPSHOT>>> versions of the one
+    or more dependencies.  This is enabled through the use of profiles to handle the AP-related dependencies but can also be managed
+    through the use of properties.
+
+    The use of properties for versions is added as a convenience.  Command-line declaration of versions
+    should never used for official release builds as it can lead to non-reproducible builds.
+
+Version Properties
+
+    The following table outlines the AP modules and the associated version properties.  All AP dependencies should use the
+     <<<version.ap.XXXX>>> properties; the <<<dev.XXXX>>> properties are used in the profiles only.
+
+*---------------------+---------------------------+-----------------------+
+|| Git Repo           || Released Property        || Snapshot Property    |
+*---------------------+---------------------------+-----------------------+
+| ap-service-api      | version.ap.service.api    | dev.service.api       |
+*---------------------+---------------------------+-----------------------+
+| ap-data-model-core  | version.ap.model.core     | dev.model.core        |
+*---------------------+---------------------------+-----------------------+
+| ap-data-model-macro | version.ap.model.macro    | dev.model.macro       |
+*---------------------+---------------------------+-----------------------+
+| ap-service-core     | version.ap.service.core   | dev.service.core      |
+*---------------------+---------------------------+-----------------------+
+| ap-service-macro    | version.ap.service.macro  | dev.service.macro     |
+*---------------------+---------------------------+-----------------------+
+| ap-workflow-macro   | version.ap.workflow.macro | dev.workflow.macro    |
+*---------------------+---------------------------+-----------------------+
+| ap-macro-testware   | version.ap.macro.testware | dev.macro.testware    |
+*---------------------+---------------------------+-----------------------+
+
+Development Version Profiles
+
+    A number of profiles are defined to allow finer-grained control of which AP modules should use snapshots.
+
+    It is recommended that a profile be enabled through the use of <<<-D\<property\>>>> rather than <<<-P \<profile\>>>>.
+
+    The list below describes the defined profiles and the enabling property name is the same as the profile name.
+    For example, add <<<-Dsnapshot.service.api>>> to the maven command line in order to enable the use of the latest snapshot
+    version for the <<<ap-service-api>>> module. Multiple snapshot profiles can be enabled by specifying multiple <<<-Dsnapshot.XXX>>>
+    properties on the command line.
+
+    The following version profiles are available
+
+    * snapshot.all
+
+        Use snapshots of all modules
+
+    * snapshot.service.api
+
+        Use snapshot version of <ap-service-api>
+
+    * snapshot.model.core
+
+        Use snapshot version of <ap-data-model-core>
+
+    * snapshot.model.macro
+
+        Use snapshot version of <ap-data-model-macro>
+
+   * snapshot.service.core
+
+        Use snapshot version of <ap-service-core>
+
+   * snapshot.service.macro
+
+        Use snapshot version of <ap-service-macro>
+
+   * snapshot.workflow.macro
+
+        Use snapshot version of <ap-workflow-macro>
+
+   * snapshot.macro.testware
+
+        Use snapshot version of <ap-macro-testware>
+
+Way of Working
+
+* Pom version management
+
+    Please see {{{./pomVersionManagement.html}here}} for further information about how pom versions are managed.
+
+* External dependency management
+
+    External dependencies are defined as all non-AP dependencies.  This includes ENM dependencies such as Service Framework, Modeling Framework and DPS
+    to name a few but it also includes other 3PP dependencies (JBoss, Apache etc.).
+
+    It is preferable to update these external dependency versions as early as possible in the sprint, well in advance of a release build, so that
+    the development cycle has had a chance to use the new versions.  This reduces the risk of last minute failures due to changes provided by the new
+    versions.
+    
+    << Note >>: Versions of some dependencies have been extracted from the Modeling BOM. These versions must also be updated whenever the
+    "\<version.modelling.bom\>" is updated. These versions are listed between the "\<!-- Start taken from Modelling BOM --\>" comment and 
+    the "\<!-- End taken from Modelling BOM --\>" comment, and need to be copied from the Modeling-BOM pom file. 
+
+* AP RPM Release Cycle
+
+    A number of rpms are required in order to deliver AP functionality.  This section describes the release build cycle of multiple AP
+    product rpms.
+
+    <<*** IMPORTANT ***>>: A full release cycle that releases all rpms will take some period of time due to the number of jobs and steps
+    involved.  If all goes well then a full release cycle should take no more than an hour.
+
+    <<*** IMPORTANT ***>>: As pushes to git <<<master>>> branch are required the person running the release cycle must have permissions to push
+    directly to master or be able to approve and merge a Gerrit review or there is a code guardian available to do so.  The ability to get
+    changes onto master is required for the duration of the release cycle, not just when releasing the parent in case corrections are
+    needed during the release.
+
+    <"More haste, less speed"> - trying to be quick here can sometimes lead to build failures that eventually slow down the cycle.
+
+    [[1]] Let teams know that the release cycle is beginning.  It is best to not have any non-release changes pushed to master while the
+     cycle is in progress.
+
+    [[2]] Release the ap-parent pom.  Please see {{{./ap-parent_Release.html}here}} for further details about the parent release cycle.
+
+    [[3]] Release any rpms as required.  Please see {{{./ApProductReleaseCycle.html}here}} for further details about the rpm release cycle.
+
+    The build order should be:
+
+        * ap-service-api
+
+        * ap-data-model-core
+
+        * ap-service-core
+
+        * ap-data-model-macro
+
+        * ap-service-macro
+
+        * ap-workflow-macro
+
+        * ap-macro-testware
+
+    [[4]] Update ap-parent dev.XXX properties if sprint versioning was involved in the release.
+
+    This involves updating the version from <<<X.Y.1-SNAPSHOT>>> to <<<X.Y.2-SNAPSHOT>>> and pushing the changes back to master for
+    ongoing development.
+
+    [[5]] Send email to teams indicating that the release cycle has completed.  Include links to the released rpms.
+
+* Integration pom Update
+
+    The ENM integration pom is the parent pom of <<<ap-parent>>>.  When a new integration pom is release the version in <<<ap-parent>>> must be
+    updated.  This is handled automatically through the use of the
+    {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Parent_Update/}<<<ap-parent_Parent_Update>>>}} job which is run as a downstream job of the
+    integration release job.  The following diagram describes the flow.
+
+[images/ap-parent_integration_parent_update.png] ap-parent Parent Update Flow
+
+Using ap-parent locally
+
+* Build local parent pom
+
+    The parent pom can be built locally independently of building the modules.  By default versions should be pulled from Nexus
+    but you can use the following command to install the parent pom in your local m2 repository.
+
+---
+mvn [clean] install
+---
+
+* Full AP build
+
+    You can use the parent to do a full build of all of the AP modules.  The modules are defined are defined in the <<<all-modules>>> profile
+    which is activated by the <<<modules>>> property.  They are disabled by default so that a basic maven build of the parent builds the parent
+    pom only.
+
+    Use following command from the <<<ap-parent>>> repository:
+
+---
+mvn [clean] install -Dmodules -Dsnapshot.all
+---
+
+* AP Parent site generation
+
+    You can generate this document (and any additional site documents) by using the following command in the <<<ap-parent>>> repository.
+
+---
+mvn clean site
+---
+

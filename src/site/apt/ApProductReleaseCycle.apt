@@ -1,0 +1,237 @@
+    -----
+    AP Product Release Cycle
+    -----
+
+Purpose
+
+    This page describes the flow required to execute a release build for a generic AP product repository.  This page assumes that the
+    ap-parent pom has been appropriately released.  Please see {{{./ap-parent_Release.html}here}} for further details if necessary.
+
+Overview
+
+    On a high level the AP Product release cycle for each of the AP rpms consists of the following steps:
+
+    [[1]] The ApXXX_Parent_Update job for the ApXXX rpm is triggered by the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Release/}ap-parent_Release}} job, 
+          which was executed by the <<developer>> earlier. This 
+          
+          [[a]] steps the release version of the ap-parent artifactId in the top-level pom of the ApXXX rpm
+          
+          [[b]] runs the Unit and Acceptance jobs to build <<<X.X.X-SNAPSHOT>>> version of the ApXXX rpm
+    
+             <<*** IMPORTANT ***>>: Frequently (90% of the times) the above jobs show repeated {{{http://jenkins-ci.org/content/quiet-period-feature}quiet period}} behaviour. 
+             If this happens the <<developer>> must manually trigger the Unit build job for the ApXXX rpm.
+             
+             <<*** IMPORTANT ***>>: Ensure the Acceptance job has successfully completed, before triggering the ApXXX_Release job below. 
+             
+             << Note >>: If updates were made to the ApXXX rpm's code base, then the <<developer>> can commit the updates for review. After the guardian accepts and merges the
+             updates, the Unit and Acceptance jobs to re-build <<<X.X.X-SNAPSHOT>>> version of the ApXXX rpm will be triggered. 
+          
+    [[2]] <<Developer>> triggers the ApXXX_Unit job. This is necessary as automatic triggering of Jenkins jobs in step 1 above is too slow in the current CI environment
+    
+    [[3]] <<Developer>> triggers the ApXXX_Acceptance job. This is necessary as automatic triggering of Jenkins jobs in step 1 above is too slow in the current CI environment
+    
+    [[4]] <<Developer>> triggers the ApXXX_Release job. This
+    
+          [[a]] builds and deploys <<<X.X.X>>> release version for the ApXXX rpm
+          
+          [[b]] then updates the poms of the ApXXX rpm to <<<X.X.Y-SNAPSHOT>>> version
+          
+          [[c]] runs the Unit and Acceptance jobs to build <<<X.X.Y-SNAPSHOT>>> version of the ApXXX rpm
+          
+             << Note >>: It is important that the <<<X.X.Y-SNAPSHOT>>> version of the ApXXX rpm is deployed into Nexus. Other ApXXX rpms with a dependency on 
+             this ApXXX rpm, will require this version for their successful builds.
+             The <<developer>> may need to manually run the Unit job to build and deploy <<<X.X.Y-SNAPSHOT>>> version of the ApXXX rpm into Nexus. 
+    
+    [[5]] <<Developer>> triggers the ApXXX_Unit job. This is necessary as automatic triggering of Jenkins jobs in step 4 above is too slow in the current CI environment
+    
+    [[6]] <<Developer>> triggers the ApXXX_Acceptance job. This is necessary as automatic triggering of Jenkins jobs in step 4 is too slow in the current CI environment
+    
+  
+  The following diagram shows the process involved executing a release build for a single AP repo.  It is important to have a good understanding of the 
+  detailed process, before executing the AP Product Release cycle. Open the image in a new window or tab to see it at full size.
+
+[images/APProductReleaseCycle.png] AP Product Release Cycle
+
+Process
+
+    The following description is based on <<<ApXXX>>> rpm starting with version <<<X.X.X-SNAPSHOT>>>.
+
+    <<*** IMPORTANT ***>>: there are a few steps where source is pushed to gerrit central and then is mirrored to <<<gerritmirror.lmera>>>.  The Jenkins
+    jobs pull from <<<gerritmirror.lmera>>> and there is a small delay between pushing a change to gerrit central and the change appearing
+    on <<<gerritmirror.lmera>>>.  It usually takes no more than 1 minute for the change to be mirrored.  Please take this fact into account
+    if you decide to manually trigger Jenkins jobs.
+
+    <<*** IMPORTANT ***>>: there are a number of jobs triggered by Jenkins.  Often these jobs do not execute immediately.  They may go into a
+    {{{http://jenkins-ci.org/content/quiet-period-feature}quiet period}} wait state or may be waiting on an executor.  Before proceeding
+    with manually triggering following steps be sure to know the current state of job execution to make sure things are ready to proceed.
+
+    [[1]] Jenkins triggers ApXXX_Parent_Update job
+
+    A release of the ap-parent pom must occur when releasing one or more new AP rpms.  This job is triggered as part of the
+    {{{./ap-parent_Release.html}ap-parent}} release cycle.
+
+    [[2]] Jenkins updates the top level pom to use latest released parent version.
+
+    [[3]] Jenkins pushes updated pom to git <<<master>>> on gerrit central.
+
+    [[4]] Gerrit mirrors updated pom to git <<<master>>> on <<<gerritmirror.lmera>>>.
+
+    [[5]] Jenkins polls <<<gerritmirror.lmera>>> for changes.
+
+    [[6]] Jenkins triggers ApXXX_Unit job when changes are found.
+
+    [[7]] Jenkins pushes changes to git <<<acceptance>>> branch on gerrit central.
+
+    [[8]] Gerrit mirrors changes to git <<<acceptance>>> branch on <<<gerritmirror.lmera>>>.
+
+    [[9]] Jenkins triggers ApXXX_Acceptance job as a downstream build of ApXXX_Unit.
+
+    Be wary of the Jenkins {{{http://jenkins-ci.org/content/quiet-period-feature}quiet period}} behaviour with the execution
+    of this job in particular.
+
+    [[10]] Jenkins pulls from git <<<acceptance>>> branch on <<<gerritmirror.lmera>>>.
+
+    [[11]] Maven deploys <<<<<<X.X.X-SNAPSHOT>>>>>> to Nexus <<<snapshots>>> repository.
+
+    [[12]] Jenkins pushes changes for <<<X.X.X-SNAPSHOT>>> to git <<<release>>> branch on gerrit central.
+
+    [[13]] Gerrit mirrors changes for <<<X.X.X-SNAPSHOT>>> to git <<<release>>> branch on <<<gerritmirror.lmera>>>.
+
+    [[14]] <<Developer>> triggers the ApXXX_Release job
+
+    This job is responsible for building and deploying the released version of the ApXXX rpm.
+
+    <<*** IMPORTANT ***>> Do not trigger the Release job until you are confident that the Acceptance
+    job triggered in step 9 and the mirror in step 13 have completed.
+
+    [[15]] Jenkins pulls from git release branch on <<<gerritmirror.lmera>>>.
+
+    [[16]] Jenkins builds and deploys release version <<<X.X.X>>>
+
+    [[17]] Jenkins updates top-level pom to set version to next development version (<<<X.X.Y-SNAPSHOT>>>)
+
+    [[18]] Jenkins pushes changes for <<<X.X.Y-SNAPSHOT>>> to git <<<master>>> branch on gerrit central.
+
+    [[19]] Gerrit mirrors changes for <<<X.X.Y-SNAPSHOT>>> to git <<<master>>> branch on <<<gerritmirror.lmera>>>.
+
+    [[20]] Jenkins polls <<<gerritmirror.lmera>>> for changes (<<<X.X.Y-SNAPSHOT>>>)
+
+    [[21]] Jenkins triggers ApXXX_Unit job when changes are found (<<<X.X.Y-SNAPSHOT>>>).
+
+    [[22]] Jenkins pushes changes (<<<X.X.Y-SNAPSHOT>>>) to git <<<acceptance>>> branch on gerrit central.
+
+    [[23]] Gerrit mirrors changes (<<<X.X.Y-SNAPSHOT>>>) to git <<<acceptance>>> branch on <<<gerritmirror.lmera>>>.
+
+    [[24]] Jenkins triggers ApXXX_Acceptance job as a downstream build of ApXXX_Unit (<<<X.X.Y-SNAPSHOT>>>).
+
+    [[25]] Jenkins pulls from git <<<acceptance>>> branch on <<<gerritmirror.lmera>>> (<<<X.X.Y-SNAPSHOT>>>).
+
+    [[26]] Maven deploys <<<X.X.Y-SNAPSHOT>>> to Nexus snapshots repository.
+
+    Note that technically the <<<X.X.Y-SNAPSHOT>>> changes will also be pushed to the git release
+    branch but the steps after the deploy from ApXXX_Acceptance are omitted for clarity purposes.
+
+    The rpm release cycle is now complete.
+
+What if the ApXXX_Unit job fails?
+
+    The most likely cause of failure of a unit job is when a dependent AP rpm has not completed its release cycle and therefore the
+    new snapshot version referenced in the parent pom does not yet exist in Nexus.
+
+What if the ApXXX_Release job fails?
+
+    This job is the most likely failure point and there are three basic causes.
+
+* SNAPSHOT versions in use
+
+    In this scenario there is some maven dependency that is referencing a <<<SNAPSHOT>>> version.
+
+    The end of the job log will contain something similar to:
+
++-----+
+Caused by: org.apache.maven.shared.release.ReleaseFailureException: Can't release project due to non released dependencies :
+    com.ericsson.oss.autoprovisioning.ap-parent:ap-parent:pom:1.2.13-SNAPSHOT
+in project 'ap-service-core' (com.ericsson.oss.autoprovisioning.core:ap-service-core:pom:1.3.6-SNAPSHOT)
+	at org.apache.maven.shared.release.phase.CheckDependencySnapshotsPhase.checkProject(CheckDependencySnapshotsPhase.java:180)
+	at org.apache.maven.shared.release.phase.CheckDependencySnapshotsPhase.execute(CheckDependencySnapshotsPhase.java:107)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:234)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:169)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:146)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:107)
+	at org.apache.maven.plugins.release.PrepareReleaseMojo.prepareRelease(PrepareReleaseMojo.java:277)
+	... 30 more
+Sending e-mails to: PDLSCRUMPE@ex1.eemea.ericsson.se
+channel stopped
+Build did not succeed and the project is configured to only push after a successful build, so no pushing will occur.
+Sending e-mails to: PDLSCRUMPE@ex1.eemea.ericsson.se
+Notifying upstream projects of job completion
+Finished: FAILURE
++-----+
+
+    If the version/dependency is defined in the ap-parent pom then it needs to be fixed there and the ap-parent re-released.
+
+    If the version/dependency is locally established in the product repository then the version is corrected and the build release
+    cycle is restarted.
+
+* Fail to push changes to master
+
+    This situation occurs when there are commits on the <<<master>>> branch that are not in the release branch at the time of running the
+    release job.
+
+    There are two causes for this.
+
+    [[1]] The release job was run before the Acceptance job had executed and completed and therefore the change hasn't yet made it to the
+    git release branch; however, the release version has been built and pushed to Nexus.  This is how the <Version already deployed> scenario
+    typically arises.
+
+    [[2]] Someone has committed a change to <<<master>>> while the release process is underway.
+
+    In this failure situation there is nothing that can be done but to update the version in the ap-parent pom, re-release the parent and restart
+    this release cycle.  If other product rpms were successfully built there is no need to rebuild them even though there is a new parent.
+
+    The Jenkins job log will help identify this situation.  The end of the log will look similar to:
+
++-----+
+To ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.autoprovisioning.macro/ap-workflow-macro
+ * [new tag]         ap-workflow-macro-1.5.1 -> ap-workflow-macro-1.5.1
+ ! [rejected]        Release -> Release (non-fast-forward)
+error: failed to push some refs to 'ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.autoprovisioning.macro/ap-workflow-macro'
+To prevent you from losing history, non-fast-forward updates were rejected
+Merge the remote changes before pushing again.  See the 'Note about
+fast-forwards' section of 'git push --help' for details.
+Build step 'Execute shell' marked build as failure
+Build did not succeed and the project is configured to only push after a successful build, so no pushing will occur.
+Sending e-mails to: PDLSCRUMPE@ex1.eemea.ericsson.se
+Notifying upstream projects of job completion
+Finished: FAILURE
++-----+
+
+* Version already deployed
+
+    Once a released version has been deployed to Nexus it can not be deployed again.
+
+    The end of the job log will contain something similar to:
+
++-----+
+Caused by: org.apache.maven.shared.release.scm.ReleaseScmCommandException: Unable to tag SCM
+Provider message:
+The git-tag command failed.
+Command output:
+fatal: tag 'ap-workflow-macro-1.5.1' already exists
+
+	at org.apache.maven.shared.release.phase.ScmTagPhase.execute(ScmTagPhase.java:136)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:234)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:169)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:146)
+	at org.apache.maven.shared.release.DefaultReleaseManager.prepare(DefaultReleaseManager.java:107)
+	at org.apache.maven.plugins.release.PrepareReleaseMojo.prepareRelease(PrepareReleaseMojo.java:277)
+	... 30 more
+Sending e-mails to: PDLSCRUMPE@ex1.eemea.ericsson.se
+channel stopped
+Build did not succeed and the project is configured to only push after a successful build, so no pushing will occur.
+Sending e-mails to: PDLSCRUMPE@ex1.eemea.ericsson.se
+Notifying upstream projects of job completion
+Finished: FAILURE
++-----+
+
+    To fix the issue is the same as for the <Fail to push changes to master> issue.

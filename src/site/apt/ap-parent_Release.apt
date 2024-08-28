@@ -1,0 +1,173 @@
+    -----
+    ap-parent Release Cycle
+    -----
+
+Purpose
+
+    This page describes the process for releasing the <<<ap-parent>>> pom.
+
+    The purpose is to step the snapshot version of the ap-parent artifactId in the <<<ap-parent>>> and <<<ap-development-deployment>>> poms,
+    and to step the full version of the ap-parent artifactId in the top level pom in the ApXXX rpms. 
+
+    This release of the <<<ap-parent>>> pom is required to make updates to <<<external dependency>>>, <<<dev.\<module\>>>> and <<<version.ap.\<module\>>>> 
+    versions visible to the build jobs of the ApXXX rpms. 
+
+    If the release of the <<<ap-parent>>> pom is not made, then the build jobs of the ApXXX rpms will pick-up the old version of the <<<ap-parent>>> pom
+    from Nexus repository, which will/may have out-of-date dependencies.
+
+Overview
+
+    On a high level the ap-parent release cycle consists of the following steps:
+
+    [[1]] <<Developer>> updates the relevant <<<external dependency versions>>>, <<<version.ap.\<module\>>>> and <<<dev.\<module\>>>> entries 
+          in the <<<ap-parent>>> pom.
+
+    [[2]] <<Developer>> commits the updates for review, and the guardian approves and merges the changes. 
+
+          This triggers the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Unit/}ap-parent_Unit}} job to build 
+          <<<X.X.X-SNAPSHOT>>> version of <<<ap-parent>>> pom.
+
+    [[3]] <<Developer>> triggers the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Release/}ap-parent_Release}} job. This
+
+          [[a]] builds the <<<X.X.X>>> release version of <<<ap-parent>>> pom
+          
+          [[b]] updates the <<<ap-parent>>> pom to <<<X.X.Y-SNAPSHOT>>>
+          
+          [[c]] steps the release version of ap-parent artifactId in the top-level pom in each of the ApXXX rpms to <<<X.X.X>>>
+          
+          [[d]] runs the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Unit/}ap-parent_Unit}} job to build the 
+          <<<X.X.Y-SNAPSHOT>>> version of <<<ap-parent>>> pom.
+
+  <<*** IMPORTANT ***>>: the <<<ap-parent>>> version should not be updated manually, as various Jenkins jobs take care of this. 
+  Manual updates of <<<ap-parent>>> should only be considered when a Jenkins job has failed to execute correctly.
+
+  The following diagram is a reference for the detailed process to release the parent pom. It is important to have a good understanding of the 
+  detailed process, before executing the ap-parent_Release cycle. Open the diagram in a new tab/window to see it full sized.
+
+[images/ap-parent_Release_Cycle.png]
+
+Process
+
+    The following description is based on <<<ap-parent>>> starting with version <<<X.X.X-SNAPSHOT>>>.
+
+    <<*** IMPORTANT ***>>: there are a few steps where source is pushed to gerrit central and then is mirrored to gerrittmirror.lmera.  The Jenkins
+    jobs pull from <<<gerritmirror.lmera>>> and there is a small delay between pushing a change to gerrit central and the change appearing
+    on <<<gerritmirror.lmera>>>.  It usually takes no more than 1 minute for the change to be mirrored.  Please take this fact into account
+    if you decide to manually trigger Jenkins jobs.
+
+    <<*** IMPORTANT ***>>: there are a number of jobs triggered by Jenkins.  Often these jobs do not execute immediately.  They may go into a
+    {{{http://jenkins-ci.org/content/quiet-period-feature}quiet period}} wait state or may be waiting on an executor.  Before proceeding
+    with manually triggering following steps be sure to know the current state of job execution to make sure things are ready to proceed.
+    A tool such as {{{https://www.atlassian.com/software/sourcetree/overview}Atlassion SourceTree}} may be useful to visualize the completion of a job.
+
+    [[1]] <<Developer>> updates the appropriate version properties for the modules being release. Note, these released versions will not have been built yet.
+    Two properties need to be updated for every module being released.
+
+        [[a]] Update <<<external dependency versions>>> (i.e. Service Framework, modeling, DPS, etc.) if not already updated.
+
+            << Note >>: It is preferable to update these external dependency versions as early as possible in the sprint, well in advance of a
+            release build, so that the development cycle has had a chance to use the new versions.  This reduces the risk of last minute failures
+            due to changes provided by the new versions.
+
+            << Note >>: Versions of some dependencies have been extracted from the Modeling BOM. These versions must also be updated whenever the
+            "\<version.modelling.bom\>" is updated. These versions are listed between the "\<!-- Start taken from Modelling BOM --\>" comment and 
+            the "\<!-- End taken from Modelling BOM --\>" comment, and need to be copied from the Modeling-BOM pom file. 
+
+        [[b]] Run a local build as an initial verification of the external dependency changes.  Make sure all of your local repos are up to date and execute
+        <<<mvn clean install -Dmodules -Dsnapshot.all>>> from the <<<ap-parent>>> directory.
+
+        [[c]] <<<version.ap.\<module\>>>> is set to the version about to be released.
+
+            For example, if the current snapshot version of the <<<ap-service-core>>> module is <<<1.1.1-SNAPSHOT>>> then the release property
+             <<<version.ap.service.core>>> should be set to <<<1.1.1>>>.
+
+        [[d]] <<<dev.\<module\>>>> is set to the next snapshot version after the release.
+
+            For example, if the released version of the <<<ap-service-core>>> module established in the above step is <<<1.1.1>>> then the property
+             <<<dev.service.core>>> should be set to <<<1.1.2-SNAPSHOT>>>.
+
+             Please see {{{SprintVersionUpdates}Sprint Version Updates}} for some special handling regarding sprint version handling.
+
+        [[d]] Any external snapshot dependencies are set to released versions.
+
+    [[2]] <<Developer>> pushes the updates for review.
+
+    [[3]] Guardian verifies the versions paying particular attention to the external dependencies.
+
+    [[4]] Guardian approves and submits the patch to <<<master>>>
+
+    [[5]] Gerrit mirrors changes to <<<gerritmirror.lmera>>>.
+
+    [[6]] Jenkins is polling the <<<master>>> branch on the mirror for changes.
+
+    [[7]] Jenkins triggers the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Unit/}ap-parent_Unit}} job when it sees
+    the changes.
+
+    [[8]] Jenkins deploys the latest SNAPSHOT (<<<X.X.X-SNAPSHOT>>>) to Nexus.
+
+    [[9]] Jenkins pushes changes to git <<<release>>> branch.
+
+    [[10]] Gerrit mirrors changes to <<<gerritmirror.lmera>>>.
+
+    [[11]] <<Developer>> triggers Jenkins {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Release/}ap-parent_Release}} job.
+
+    [[12]] Jenkins pulls latest from release branch.
+
+    [[13]] Jenkins updates <<<ap-parent>>> pom version to released version (from <<<X.X.X.-SNAPSHOT>>> to <<<X.X.X>>>).
+
+    [[14]] Jenkins builds and deploys released version to Nexus (<<<X.X.X>>>).
+
+    [[15]] Jenkins pushes next development version (<<<X.X.Y-SNAPSHOT>>>) of <<<ap-parent>>> pom version to git <<<master>>> branch.
+
+    [[16]] Jenkins triggers <<<ApXXX_Parent_Update>>> modules as downstream builds of
+    {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Release/}ap-parent_Release}}
+
+        Each <<<ApXXX_Parent_Update>>> job updates the top level pom of the repo to set the version of <<<ap-parent>>> to the latest
+        release version just released.  The changes are pushed to git master branch which will trigger the associated <<<ApXXX_Unit>>> Jenkins
+        job.
+
+        The list of <<<ApXXX_Parent_Update>>> jobs is as follows.
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApServiceApi_Parent_Update/}ApServiceApi_Parent_Update}}
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApDataCore_Parent_Update/}ApDataCore_Parent_Update}}
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApDataMacro_Parent_Update/}ApDataMacro_Parent_Update}}
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApServiceCore_Parent_Update/}ApServiceCore_Parent_Update}}
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApServiceMacro_Parent_Update/}ApServiceMacro_Parent_Update}}
+
+        * {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ApWorkflowMacro_Parent_Update/}ApWorkflowMacro_Parent_Update}}
+
+        * {{{https://jenkins.lmera.ericsson.se/tor-ci-1/job/ap-macro-testware_Parent_Update/}ap-macro-testware_Parent_Update}}
+
+            <<Note>>: The <<<ap-macro-testware_Parent_Update>>> job must currently be manually triggered as it resides on a different
+            server and therefore can not be triggered by a different Jenkins instance.  The CI Execution team are considering a
+            solution to this issue (see comments in {{http://jira-oss.lmera.ericsson.se/browse/TORCI-3336}}.
+
+    [[17]] Gerrit mirrors next development version (<<<X.X.Y-SNAPSHOT>>>) to <<<gerritmirror.lmera>>>.
+
+    [[18]] Jenkins is polling the <<<master>>> branch on the mirror for changes.
+
+    [[19]] Jenkins triggers the {{{http://eselivm2v553l.lmera.ericsson.se:8080/jenkins/job/ap-parent_Unit/}ap-parent_Unit}} job when it sees
+    the changes.
+
+    [[20]] Jenkins deploys the latest SNAPSHOT (<<<X.X.Y-SNAPSHOT>>>) to Nexus.
+
+    [[21]] Jenkins pushes changes to git <<<release>>> branch.
+
+    [[22]] Gerrit mirrors changes to <<<gerritmirror.lmera>>>.
+
+    The <<<ap-parent>>> release cycle is complete at this point.
+
+Sprint Version Updates
+
+    Normally if the released version property for a repo is set to <<<X.X.X>>> then the development property is set to <<<X.X.Y-SNAPSHOT>>>
+    (patch number incremented by 1 and <<<-SNAPSHOT>>> added).
+
+    At the end of the sprint where rpms have been delivered the repo is updated for sprint versioning; the minor number is incremented
+    by one and the patch number is set to 1.
+    The released version will be updated from <<<X.X.X>>> to <<<X.Y.1>>> and the development
+    version should be set to <<<X.Y.1-SNAPSHOT>>>.  Note that the patch number of both versions is set to 1.  The development patch version
+    will eventually be updated to <<<X.Y.2-SNAPSHOT>>> once the repo has been through its release cycle.

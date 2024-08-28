@@ -1,0 +1,44 @@
+    -----
+    Pom Version Management
+    -----
+
+Purpose
+
+    This page documents the version management of the top-level pom in AP repositories.
+
+    Generally speaking the parent and artifact version numbers should not be manually edited.  They are updated through
+     the use of Jenkins jobs; however, there may be times that manual editing is needed, for example, in order to recover from a failed
+     release build.
+
+[images/Pom_Version_Update.png] Pom Version Update Flow
+
+    Note, in this diagram there are some interactions that are not technically true but are shown to make the diagram simpler.  Specifically,
+    pom.xml artefacts don't push themselves to a git repository.  This actually happens as part of Jenkins job execution or through a developer
+    pushing the update.
+
+ApXXX_Parent_Update:JenkinsJob
+
+    This job is used to update the version of ap-parent used.  It is automatically triggered by Jenkins as a downstream build
+    of ap-parent_Release.  It can not be manually triggered.
+
+ApXXX_Release:JenkinsJob
+
+    This job is manually triggered by a developer as part of the rpm release cycle.
+
+    The purpose of this job is to build artifacts using a release version number and then update the pom version for the next development
+    version.  The version will transition from <<<X.X.X-SNAPSHOT>>> to <<<X.X.X>>> and finally to <<<X.X.Y-SNAPSHOT>>>.
+
+ApXXX_Sprint_Update:JenkinsJob
+
+    This job is manually triggered by a developer, typically at the start of a sprint, if an rpm for the repository was delivered in
+    the last sprint.  The updates are pushed directly to the git master branch.
+
+    If is better to use the job for updating the versions as all sub modules will be updated accordingly; however, if necessary the
+    pom version could be manually edited.  When manually editing the version it is very important that the versions of all sub poms
+    are also edited to specify the same version as the top-level pom for the repository.
+
+ApXXX_Unit:JenkinsJob
+
+    This job will eventually be triggered regardless of which of the version update mechanisms has been used because the update is pushed
+    to git master which will trigger the execution of this job.
+

@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.4.0 http://maven.apache.org/xsd/decoration-1.4.0.xsd
+http://maven.apache.org/DECORATION/1.4.0 "
+         name="AP Parent Pom">
+
+    <bannerRight>
+        <name>Ericsson</name>
+        <alt>Ericsson Logo</alt>
+        <src>images/ericsson_logo.png</src>
+    </bannerRight>
+
+    <body>
+        <links>
+            <item name="Report bugs" href="${jira.url}"/>
+            <item name="Gerrit" href="${gerritUrl}"/>
+            <item name="Jira" href="${jira.url}"/>
+            <item name="Nexus" href="${nexusUrl}"/>
+        </links>
+
+        <menu name="Useful Links">
+            <item name="Parent Pom Home" href="index.html"/>
+            <item name="Local Deployment Instructions" href="deployment.html"/>
+            <item name="ap-parent Release Instructions" href="ap-parent_Release.html"/>
+            <item name="Product RPM Release Instructions" href="ApProductReleaseCycle.html"/>
+            <item name="Gitweb" href="${gerritUrl}/gitweb?p=OSS%2Fcom.ericsson.oss.autoprovisioning.ap-parent%2Fap-parent.git"/>
+            <item name="Unit Jenkins Job" href="${jenkinsUrl}/job/ap-parent_Unit/"/>
+            <item name="Latest AP Parent Pom"
+                  href="https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/index.html#nexus-search;quick~ap-parent"/>
+        </menu>
+
+    </body>
+
+    <skin>
+        <groupId>com.ericsson.nms.pres.client</groupId>
+        <artifactId>EricssonSkin</artifactId>
+        <version>1.0-RELEASE</version>
+    </skin>
+</project>
